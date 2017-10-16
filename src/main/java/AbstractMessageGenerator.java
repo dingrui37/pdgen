@@ -1,6 +1,5 @@
-/**
- * Created by hll on 10/13/17.
- */
+import org.opendaylight.p4plugin.p4info.proto.MatchField;
+
 public abstract class AbstractMessageGenerator<T> {
     protected T element;
     protected String indent;
@@ -10,7 +9,7 @@ public abstract class AbstractMessageGenerator<T> {
         this.indent = getIndent(indentCount);
     }
 
-    private String getIndent(int indentCount) {
+    public String getIndent(int indentCount) {
         String indent = "";
         for(int i = 0; i < indentCount; i++) {
             indent += " ";
@@ -43,6 +42,60 @@ public abstract class AbstractMessageGenerator<T> {
     protected abstract String makeName();
     protected abstract String makeField();
     protected final String makeEnding() {
-        return indent + "}" + "\n";
+        return indent + "}" + "\n\n";
+    }
+
+    /**
+     * Encoding rules
+     */
+    protected final String getEncodedType(MatchField.MatchType matchType, int bitwidth) {
+        String type = null;
+        switch(matchType) {
+            case LPM: {
+                type = getLpmEncodedType(bitwidth);
+                break;
+            }
+
+            case EXACT: {
+                type = getExactEncodedType(bitwidth);
+                break;
+            }
+
+            case TERNARY: {
+                type = getTernaryEncodedType(bitwidth);
+                break;
+            }
+
+            case RANGE: {
+                type = getRangeEncodedType(bitwidth);
+                break;
+            }
+            default: throw new IllegalArgumentException("Invalid match type, type = " + matchType + ".");
+        }
+        return type;
+    }
+
+    private String getExactEncodedType(int bitwidth) {
+        String[] type = new String[]{"uint32", "uint64", "bytes"};
+        return type[getIndex(bitwidth)];
+    }
+
+    private String getLpmEncodedType(int bitwidth) {
+        String[] type = new String[]{"LPM32", "LPM64", "LPM"};
+        return type[getIndex(bitwidth)];
+    }
+
+    private String getTernaryEncodedType(int bitwidth) {
+        String[] type = new String[]{"Ternary32", "Ternary64", "Ternary"};
+        return type[getIndex(bitwidth)];
+    }
+
+    private String getRangeEncodedType(int bitwidth) {
+        String[] type = new String[]{"Range32", "Range64", "Range"};
+        return type[getIndex(bitwidth)];
+    }
+
+    private int getIndex(int bitwidth) {
+        return bitwidth / 32 > 2 ? 2 : bitwidth / 32;
     }
 }

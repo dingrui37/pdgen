@@ -1,5 +1,4 @@
 import org.opendaylight.p4plugin.p4info.proto.Action;
-import java.util.Arrays;
 
 public class ActionMessageGenerater extends AbstractMessageGenerator<Action> {
     public ActionMessageGenerater(Action action, int indentCount) {
@@ -7,15 +6,9 @@ public class ActionMessageGenerater extends AbstractMessageGenerator<Action> {
     }
 
     private String makeParamType(int paramBitwidth) {
-        String type;
-        if (paramBitwidth >= 1 && paramBitwidth < 32) {
-            type = "uint32";
-        } else if (paramBitwidth >= 32 && paramBitwidth < 64) {
-            type = "uint64";
-        } else {
-            type = "bytes";
-        }
-        return type;
+        String[] type = new String[]{"uint32", "uint64", "bytes"};
+        int index = paramBitwidth / 32 > 2 ? 2 : paramBitwidth / 32;
+        return type[index];
     }
 
     private String makeParamName(String paramName) {
@@ -25,21 +18,18 @@ public class ActionMessageGenerater extends AbstractMessageGenerator<Action> {
     @Override
     protected String makeName() {
         String actionName = element.getPreamble().getName();
-        String[] splitedActionName = actionName.split("_");
-        String result;
-        if (splitedActionName.length > 1) {
+        if (actionName.contains("_")) {
+            String[] splitedName = actionName.split("_");
             StringBuffer buffer = new StringBuffer();
-            Arrays.stream(splitedActionName).map(name -> {
-                if (!name.equals("")) {
-                    return capitalizeFirstLetter(name);
+            for(String name : splitedName) {
+                if (name.equals("")) {
+                    continue;
                 }
-                return name;
-            }).forEach(buffer::append);
-            result = new String(buffer);
-        } else {
-            result = actionName;
+                buffer.append(capitalizeFirstLetter(name));
+            }
+            return new String(buffer);
         }
-        return result;
+        return actionName;
     }
 
     @Override

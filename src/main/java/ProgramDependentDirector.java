@@ -29,6 +29,37 @@ public class ProgramDependentDirector {
         buffer.append(makeSyntaxInfo())
                 .append(makeJavaPackageInfo())
                 .append(makeJavaMultipleFilesInfo());
+
+        buffer.append("message LPM {\n")
+                .append("  bytes value = 1;\n")
+                .append("  uint32 prefix_len = 2;\n")
+                .append("}\n\n");
+
+        buffer.append("message LPM32 {\n")
+                .append("  uint32 value = 1;\n")
+                .append("  uint32 prefix_len = 2;\n")
+                .append("}\n\n");
+
+        buffer.append("message LPM64 {\n")
+                .append("  uint64 value = 1;\n")
+                .append("  uint32 prefix_len = 2;\n")
+                .append("}\n\n");
+
+        buffer.append("message Ternary {\n")
+                .append("  bytes value = 1;\n")
+                .append("  bytes mask = 2;\n")
+                .append("}\n\n");
+
+        buffer.append("message Ternary32 {\n")
+                .append("  uint32 value = 1;\n")
+                .append("  uint32 mask = 2;\n")
+                .append("}\n\n");
+
+        buffer.append("message Ternary64 {\n")
+                .append("  uint64 value = 1;\n")
+                .append("  uint64 mask = 2;\n")
+                .append("}\n\n");
+
         p4Info.getActionsList()
                 .forEach(action -> buffer.append(new ActionMessageGenerater(action, 0).construct()));
         p4Info.getTablesList()
@@ -72,4 +103,5 @@ public class ProgramDependentDirector {
         }
         return result;
     }
+
 }

@@ -68,6 +68,8 @@ public class TableEntryMessageGenerator extends AbstractMessageGenerator<Table> 
             int fieldSeq = 1;
             for(MatchField matchField : element) {
                 String type = getEncodedType(matchField.getMatchType(), matchField.getBitwidth());
+                System.out.println("test = " + getTest(matchField.getMatchType(), matchField.getBitwidth()) +
+                                    " --> " + type);
                 String name = makeMatchFiledName(matchField.getName());
                 buffer.append(indent)
                         .append("  ")

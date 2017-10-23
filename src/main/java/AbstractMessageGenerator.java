@@ -1,5 +1,8 @@
 import org.opendaylight.p4plugin.p4info.proto.MatchField;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 public abstract class AbstractMessageGenerator<T> {
     protected T element;
     protected String indent;
@@ -39,72 +42,51 @@ public abstract class AbstractMessageGenerator<T> {
     protected final String makeTitle() {
         return indent + "message " + makeName() + " {" + "\n";
     }
+
     protected abstract String makeName();
     protected abstract String makeField();
+
     protected final String makeEnding() {
         return indent + "}" + "\n\n";
+    }
+
+    public int getIndex(int bitwidth) {
+        return bitwidth / 32 > 2 ? 2 : bitwidth / 32;
     }
 
     /**
      * Encoding rules
      */
-//    protected final String getEncodedType(MatchField.MatchType matchType, int bitwidth) {
-//        String type = null;
-//        switch(matchType) {
-//            case LPM: {
-//                type = getLpmEncodedType(bitwidth);
-//                break;
-//            }
-//
-//            case EXACT: {
-//                type = getExactEncodedType(bitwidth);
-//                break;
-//            }
-//
-//            case TERNARY: {
-//                type = getTernaryEncodedType(bitwidth);
-//                break;
-//            }
-//
-//            case RANGE: {
-//                type = getRangeEncodedType(bitwidth);
-//                break;
-//            }
-//            default: throw new IllegalArgumentException("Invalid match type, type = " + matchType + ".");
-//        }
-//        return type;
-//    }
-//
-//    private String getExactEncodedType(int bitwidth) {
-//        String[] type = new String[]{"uint32", "uint64", "bytes"};
-//        return type[getIndex(bitwidth)];
-//    }
-//
-//    private String getLpmEncodedType(int bitwidth) {
-//        String[] type = new String[]{"LPM32", "LPM64", "LPM"};
-//        return type[getIndex(bitwidth)];
-//    }
-//
-//    private String getTernaryEncodedType(int bitwidth) {
-//        String[] type = new String[]{"Ternary32", "Ternary64", "Ternary"};
-//        return type[getIndex(bitwidth)];
-//    }
-//
-//    private String getRangeEncodedType(int bitwidth) {
-//        String[] type = new String[]{"Range32", "Range64", "Range"};
-//        return type[getIndex(bitwidth)];
-//    }
-
-    private int getIndex(int bitwidth) {
-        return bitwidth / 32 > 2 ? 2 : bitwidth / 32;
-    }
-
-    public String getEncodedType(MatchField.MatchType matchType, int bitwidth) {
-        String[][] rules = {{}, {},
+    protected String getEncodedType(MatchField.MatchType matchType, int bitwidth) {
+        String[][] rules = {
+                {}, //UNSPECIFIED
+                {}, //VALID
                 {"uint32", "uint64", "bytes"},
                 {"LPM32", "LPM64", "LPM"},
                 {"Ternary32", "Ternary64", "Ternary"},
                 {"Range32", "Range64", "Range"}};
         return rules[matchType.getNumber()][getIndex(bitwidth)];
+    }
+
+    protected String stripBrackets(String input) {
+        StringBuffer buffer = new StringBuffer();
+        for(char c : input.toCharArray()) {
+            if (c == '[' || c == ']') {
+                continue;
+            }
+            buffer.append(c);
+        }
+        return new String(buffer);
+    }
+
+    protected String stripDollorSign(String input) {
+        StringBuffer buffer = new StringBuffer();
+        for(char c : input.toCharArray()) {
+            if (c == '$') {
+                continue;
+            }
+            buffer.append(c);
+        }
+        return new String(buffer);
     }
 }

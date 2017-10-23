@@ -68,8 +68,6 @@ public class TableEntryMessageGenerator extends AbstractMessageGenerator<Table> 
             int fieldSeq = 1;
             for(MatchField matchField : element) {
                 String type = getEncodedType(matchField.getMatchType(), matchField.getBitwidth());
-                System.out.println("test = " + getTest(matchField.getMatchType(), matchField.getBitwidth()) +
-                                    " --> " + type);
                 String name = makeMatchFiledName(matchField.getName());
                 buffer.append(indent)
                         .append("  ")
@@ -84,7 +82,7 @@ public class TableEntryMessageGenerator extends AbstractMessageGenerator<Table> 
         }
 
         private String makeMatchFiledName(String fieldName) {
-            return fieldName.replaceAll("\\.", "_");
+            return stripDollorSign(stripBrackets(fieldName.replaceAll("\\.", "_")));
         }
     }
 
@@ -104,7 +102,7 @@ public class TableEntryMessageGenerator extends AbstractMessageGenerator<Table> 
             int fieldSeq = 1;
             for(ActionRef actionRef : element) {
                 Integer actionRefId = actionRef.getId();
-                String actionName = ProgramDependentDirector.getInstance().getAction(actionRefId).getPreamble().getName();
+                String actionName = ProtoFileGenerateDirector.getInstance().getAction(actionRefId).getPreamble().getName();
                 String type = makeActionType(actionName);
                 buffer.append(indent)
                         .append("  ")

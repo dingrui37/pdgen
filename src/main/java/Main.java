@@ -47,8 +47,8 @@ public class Main {
             }
         }
 
-        ProgramDependentDirector director = ProgramDependentDirector.getInstance();
-        director.setFile(new File(protoFile));
+        ProtoFileGenerateDirector director = ProtoFileGenerateDirector.getInstance();
+        director.setFile(pFile);
         director.setP4Info(parseRuntimeInfo(protoFile));
         File f = new File(outputPath + "/output.proto");
         PrintStream printStream = new PrintStream(f);

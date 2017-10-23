@@ -1,18 +1,17 @@
 import org.opendaylight.p4plugin.p4info.proto.Action;
 
-public class ActionMessageGenerater extends AbstractMessageGenerator<Action> {
-    public ActionMessageGenerater(Action action, int indentCount) {
+public class ActionMessageGenerator extends AbstractMessageGenerator<Action> {
+    public ActionMessageGenerator(Action action, int indentCount) {
         super(action, indentCount);
     }
 
     private String makeParamType(int paramBitwidth) {
         String[] type = new String[]{"uint32", "uint64", "bytes"};
-        int index = paramBitwidth / 32 > 2 ? 2 : paramBitwidth / 32;
-        return type[index];
+        return type[getIndex(paramBitwidth)];
     }
 
     private String makeParamName(String paramName) {
-        return paramName.replaceAll("\\.", "_");
+        return stripDollorSign(stripBrackets(paramName.replaceAll("\\.", "_")));
     }
 
     @Override

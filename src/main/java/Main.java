@@ -47,7 +47,7 @@ public class Main {
             }
         }
 
-        ProtoFileGenerateDirector director = ProtoFileGenerateDirector.getInstance();
+        FileGenerateDirector director = FileGenerateDirector.getInstance();
         director.setFile(pFile);
         director.setP4Info(parseRuntimeInfo(protoFile));
         File f = new File(outputPath + "/output.proto");

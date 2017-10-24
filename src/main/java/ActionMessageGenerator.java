@@ -11,7 +11,7 @@ public class ActionMessageGenerator extends AbstractMessageGenerator<Action> {
     }
 
     private String makeParamName(String paramName) {
-        return stripDollorSign(stripBrackets(paramName.replaceAll("\\.", "_")));
+        return paramName.replaceAll("\\.", "_");
     }
 
     @Override
@@ -31,10 +31,17 @@ public class ActionMessageGenerator extends AbstractMessageGenerator<Action> {
         return actionName;
     }
 
+    @Override protected String makeTitle() {
+        return indent + "message " + makeName() + " {";
+    }
+
     @Override
     protected String makeField() {
         StringBuffer buffer = new StringBuffer();
         int paramSeq = 1;
+        if (element.getParamsList().size() != 0) {
+            buffer.append("\n");
+        }
         for(Action.Param param : element.getParamsList()) {
             String result = indent + "  "
                     + makeParamType(param.getBitwidth())

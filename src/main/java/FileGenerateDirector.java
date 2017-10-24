@@ -4,12 +4,12 @@ import org.opendaylight.p4plugin.p4info.proto.P4Info;
 import java.io.File;
 import java.util.Optional;
 
-public class ProtoFileGenerateDirector {
+public class FileGenerateDirector {
     private P4Info p4Info;
     private File file;
-    private static ProtoFileGenerateDirector director = new ProtoFileGenerateDirector();
-    private ProtoFileGenerateDirector() {}
-    public static ProtoFileGenerateDirector getInstance() {
+    private static FileGenerateDirector director = new FileGenerateDirector();
+    private FileGenerateDirector() {}
+    public static FileGenerateDirector getInstance() {
         return director;
     }
 
@@ -59,7 +59,7 @@ public class ProtoFileGenerateDirector {
         p4Info.getActionsList()
                 .forEach(action -> buffer.append(new ActionMessageGenerator(action, 0).construct()));
         p4Info.getTablesList()
-                .forEach(table -> buffer.append(new TableEntryMessageGenerator(table, 0).construct()));
+                .forEach(table -> buffer.append(new EntryMessageGenerator(table, 0).construct()));
         return new String(buffer);
     }
 
@@ -70,12 +70,12 @@ public class ProtoFileGenerateDirector {
 
     //option java_package = ""; //Need to modify.
     private String makeJavaPackageInfo() {
-        return "option java_package = \"\";//Need to modify.\n";
+        return "option java_package = \"default\";//Need to modify package name.\n";
     }
 
     //option java_multiple_files = true;
     private String makeJavaMultipleFilesInfo() {
-        return "option java_multiple_files = true;\n";
+        return "option java_multiple_files = true;\n\n";
     }
 
     public Action getAction(int actionId) {
@@ -90,5 +90,4 @@ public class ProtoFileGenerateDirector {
         }
         return result;
     }
-
 }

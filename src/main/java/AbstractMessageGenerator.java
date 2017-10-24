@@ -1,8 +1,5 @@
 import org.opendaylight.p4plugin.p4info.proto.MatchField;
 
-import java.util.Arrays;
-import java.util.stream.Stream;
-
 public abstract class AbstractMessageGenerator<T> {
     protected T element;
     protected String indent;
@@ -20,7 +17,7 @@ public abstract class AbstractMessageGenerator<T> {
         return indent;
     }
 
-    protected final String capitalizeFirstLetter(String name) {
+    protected String capitalizeFirstLetter(String name) {
         char[] cs = name.toCharArray();
         if ((cs[0] >= 'a' && cs[0] <= 'z') || (cs[0] >= 'A' && cs[0] <= 'Z')) {
             cs[0] -= 32;
@@ -31,7 +28,7 @@ public abstract class AbstractMessageGenerator<T> {
         return String.valueOf(cs);
     }
 
-    public final String construct() {
+    public String construct() {
         StringBuffer buffer = new StringBuffer();
         buffer.append(makeTitle())
                 .append(makeField())
@@ -39,15 +36,15 @@ public abstract class AbstractMessageGenerator<T> {
         return new String(buffer);
     }
 
-    protected final String makeTitle() {
-        return indent + "message " + makeName() + " {" + "\n";
+    protected String makeTitle() {
+        return indent + "message " + makeName() + " {\n";
     }
 
     protected abstract String makeName();
     protected abstract String makeField();
 
-    protected final String makeEnding() {
-        return indent + "}" + "\n\n";
+    protected String makeEnding() {
+        return indent + "}\n\n";
     }
 
     public int getIndex(int bitwidth) {
@@ -68,7 +65,7 @@ public abstract class AbstractMessageGenerator<T> {
         return rules[matchType.getNumber()][getIndex(bitwidth)];
     }
 
-    protected String stripBrackets(String input) {
+    protected final String stripBrackets(String input) {
         StringBuffer buffer = new StringBuffer();
         for(char c : input.toCharArray()) {
             if (c == '[' || c == ']') {
@@ -79,7 +76,7 @@ public abstract class AbstractMessageGenerator<T> {
         return new String(buffer);
     }
 
-    protected String stripDollorSign(String input) {
+    protected String stripDollarSign(String input) {
         StringBuffer buffer = new StringBuffer();
         for(char c : input.toCharArray()) {
             if (c == '$') {

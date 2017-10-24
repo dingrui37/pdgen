@@ -3,8 +3,8 @@ import org.opendaylight.p4plugin.p4info.proto.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class TableEntryMessageGenerator extends AbstractMessageGenerator<Table> {
-    public TableEntryMessageGenerator(Table table, int indentCount) {
+public class EntryMessageGenerator extends AbstractMessageGenerator<Table> {
+    public EntryMessageGenerator(Table table, int indentCount) {
         super(table, indentCount);
     }
 
@@ -32,8 +32,8 @@ public class TableEntryMessageGenerator extends AbstractMessageGenerator<Table> 
     protected String makeField() {
         return makeMatchMessageDeclare()
                 + makeMatchMessageDefine()
-                + makeActionMessageDeclare()
-                + makeActionMessageDefine();
+                + makeActionMessageDeclare();
+        //+ makeActionMessageDefine();
     }
 
     private String makeMatchMessageDeclare() {
@@ -81,8 +81,12 @@ public class TableEntryMessageGenerator extends AbstractMessageGenerator<Table> 
             return new String(buffer);
         }
 
+        @Override protected  String makeEnding() {
+            return indent + "}\n";
+        }
+
         private String makeMatchFiledName(String fieldName) {
-            return stripDollorSign(stripBrackets(fieldName.replaceAll("\\.", "_")));
+            return stripDollarSign(stripBrackets(fieldName.replaceAll("\\.", "_")));
         }
     }
 
@@ -92,14 +96,18 @@ public class TableEntryMessageGenerator extends AbstractMessageGenerator<Table> 
         }
 
         @Override
+        protected String makeTitle() {
+            return indent + "oneof " + makeName() + " {\n";
+        }
+        @Override
         protected String makeName() {
-            return  "Action";
+            return  "Actions";
         }
 
         @Override
         protected String makeField() {
             StringBuffer buffer = new StringBuffer();
-            int fieldSeq = 1;
+            int fieldSeq = 2;
             for(ActionRef actionRef : element) {
                 Integer actionRefId = actionRef.getId();
                 String actionName = ProtoFileGenerateDirector.getInstance().getAction(actionRefId).getPreamble().getName();
@@ -129,6 +137,10 @@ public class TableEntryMessageGenerator extends AbstractMessageGenerator<Table> 
                 return new String(buffer);
             }
             return actionName;
+        }
+
+        @Override protected  String makeEnding() {
+            return indent + "}\n";
         }
     }
 }
